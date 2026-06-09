@@ -1,0 +1,137 @@
+name: Multi-Platform Workflow
+
+# Trigger on pull requests to main branch
+on:
+  pull_request:
+    branches: [ main, master ]
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+# Three independent jobs - no dependencies between them
+jobs:
+  # Job 1: Ubuntu Linux
+  ubuntu-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display OS Information
+        run: |
+          echo "========================================="
+          echo "Running on Ubuntu Linux"
+          echo "========================================="
+          echo "OS Information:"
+          uname -a
+          echo ""
+          echo "Current directory:"
+          pwd
+          echo ""
+          echo "User:"
+          whoami
+      
+      - name: Create a file with OS-specific content
+        run: |
+          echo "Creating file on Ubuntu Linux..."
+          echo "This file was created on Ubuntu Linux" > ubuntu-info.txt
+          echo "Date: $(date)" >> ubuntu-info.txt
+          echo "Kernel: $(uname -r)" >> ubuntu-info.txt
+          echo "✅ File created successfully!"
+      
+      - name: Display file contents
+        run: |
+          echo "========================================="
+          echo "File Contents (ubuntu-info.txt):"
+          echo "========================================="
+          cat ubuntu-info.txt
+      
+      - name: List directory contents
+        run: |
+          echo "Files in current directory:"
+          ls -la
+
+  # Job 2: Windows
+  windows-job:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display OS Information
+        run: |
+          echo "========================================="
+          echo "Running on Windows"
+          echo "========================================="
+          echo "OS Information:"
+          systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+          echo ""
+          echo "Current directory:"
+          Get-Location
+          echo ""
+          echo "Computer Name:"
+          $env:COMPUTERNAME
+      
+      - name: Create a file with OS-specific content
+        run: |
+          echo "Creating file on Windows..."
+          echo "This file was created on Windows" > windows-info.txt
+          echo "Date: $(Get-Date)" >> windows-info.txt
+          echo "OS Version: $([Environment]::OSVersion.Version)" >> windows-info.txt
+          echo "✅ File created successfully!"
+      
+      - name: Display file contents
+        run: |
+          echo "========================================="
+          echo "File Contents (windows-info.txt):"
+          echo "========================================="
+          Get-Content windows-info.txt
+      
+      - name: List directory contents
+        run: |
+          echo "Files in current directory:"
+          Get-ChildItem
+
+  # Job 3: macOS
+  macos-job:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display OS Information
+        run: |
+          echo "========================================="
+          echo "Running on macOS"
+          echo "========================================="
+          echo "OS Information:"
+          uname -a
+          echo ""
+          echo "macOS Version:"
+          sw_vers
+          echo ""
+          echo "Current directory:"
+          pwd
+          echo ""
+          echo "User:"
+          whoami
+      
+      - name: Create a file with OS-specific content
+        run: |
+          echo "Creating file on macOS..."
+          echo "This file was created on macOS" > macos-info.txt
+          echo "Date: $(date)" >> macos-info.txt
+          echo "Kernel: $(uname -r)" >> macos-info.txt
+          echo "Product: $(sw_vers -productName)" >> macos-info.txt
+          echo "✅ File created successfully!"
+      
+      - name: Display file contents
+        run: |
+          echo "========================================="
+          echo "File Contents (macos-info.txt):"
+          echo "========================================="
+          cat macos-info.txt
+      
+      - name: List directory contents
+        run: |
+          echo "Files in current directory:"
+          ls -la
