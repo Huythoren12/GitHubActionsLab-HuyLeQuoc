@@ -1,0 +1,114 @@
+name: Dependent Jobs Workflow
+
+# Trigger on push to main branch
+on:
+  push:
+    branches: [ main ]
+  # Allow manual trigger too
+  workflow_dispatch:
+
+# Define the jobs
+jobs:
+  # Job 1: Build
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Display build start
+        run: echo "🔨 Building application..."
+      
+      - name: Simulate build process
+        run: |
+          echo "Compiling source code..."
+          sleep 5  # Simulates build time
+          echo "✅ Build completed successfully!"
+      
+      - name: Create build artifact
+        run: |
+          mkdir -p build
+          echo "Build completed at $(date)" > build/build.info
+          echo "Version: 1.0.0" >> build/build.info
+
+  # Job 2: Test (depends on build)
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Display test start
+        run: echo "🧪 Running tests..."
+      
+      - name: Simulate unit tests
+        run: |
+          echo "Running unit tests..."
+          sleep 3
+          echo "✓ Unit test 1 passed"
+          echo "✓ Unit test 2 passed"
+          echo "✓ Integration test passed"
+      
+      - name: Simulate test execution
+        run: |
+          echo "Test execution in progress..."
+          sleep 2
+          echo "✅ All tests passed successfully!"
+      
+      - name: Generate test report
+        run: |
+          echo "Test Results: $(date)" > test-report.txt
+          echo "Tests run: 42" >> test-report.txt
+          echo "Failures: 0" >> test-report.txt
+          echo "Errors: 0" >> test-report.txt
+
+  # Job 3: Deploy (depends on test)
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Display deploy start
+        run: echo "🚀 Deploying application..."
+      
+      - name: Prepare deployment
+        run: |
+          echo "Preparing deployment artifacts..."
+          sleep 2
+          echo "Artifacts packaged successfully"
+      
+      - name: Simulate deployment to staging
+        run: |
+          echo "Deploying to staging environment..."
+          sleep 3
+          echo "Deployment to staging complete"
+      
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment..."
+          sleep 2
+          echo "✅ Application deployed and verified!"
+      
+      - name: Deployment summary
+        run: |
+          echo "==================================="
+          echo "🚀 DEPLOYMENT COMPLETE 🚀"
+          echo "==================================="
+          echo "Environment: Production"
+          echo "Timestamp: $(date)"
+          echo "Status: Success"
